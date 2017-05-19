@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="edu.uw.longt8.motionkey.MainActivity">
+
+    <view class="edu.uw.longt8.motionkey.DrawingView"
+        android:id="@+id/drawingView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        />
+
+</FrameLayout>

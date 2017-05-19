@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,7 +14,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TextView xAxisInstruction = (TextView) findViewById(R.id.xAxis);
+        TextView yAxisInstruction = (TextView) findViewById(R.id.yAxis);
+        TextView zAxisInstruction = (TextView) findViewById(R.id.zAxis);
+//        TextView txtBallMovingSpeed = (TextView) findViewById(R.id.ballMovingSpeed);
+
+        xAxisInstruction.setText("Shake device along the x-axis to make " + new String(Character.toChars(0x1F618)));
+        yAxisInstruction.setText("Shake device along the y-axis to make " + new String(Character.toChars(0x1F618)));
+        zAxisInstruction.setText("Shake device along the z-axis to make " + new String(Character.toChars(0x1F618)));
+//        txtBallMovingSpeed.setText("The current ball moving speed is " + ballMovingSpeed);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

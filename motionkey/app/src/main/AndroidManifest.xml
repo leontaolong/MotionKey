@@ -21,6 +21,19 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".MainActivity"
+            >
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.uw.longt8.motionkey.MainActivity"
+                />
+
+        </activity>
+
         <service
             android:name=".MotionKey"
             android:permission="android.permission.BIND_INPUT_METHOD">
@@ -33,7 +46,6 @@
                 android:resource="@xml/method" />
         </service>
 
-        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

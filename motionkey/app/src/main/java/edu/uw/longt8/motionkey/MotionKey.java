@@ -50,7 +50,7 @@ public class MotionKey extends InputMethodService implements SensorEventListener
     public void onCreate() {
         super.onCreate();
 
-        mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         // Create linear acceleration sensor
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -63,13 +63,13 @@ public class MotionKey extends InputMethodService implements SensorEventListener
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         xAxisSensitivity = valueOf(prefs.getString("xAxisSensitivity", "5"));
         yAxisSensitivity = valueOf(prefs.getString("yAxisSensitivity", "5"));
-        zAxisSensitivity = valueOf(prefs.getString("zAxisSensitivity", "5s"));
+        zAxisSensitivity = valueOf(prefs.getString("zAxisSensitivity", "5"));
     }
 
     @Override
     public View onCreateInputView() {
         keyboardView = (FrameLayout) getLayoutInflater().inflate(R.layout.input, null);
-        view = (DrawingView)keyboardView.findViewById(R.id.drawingView);
+        view = (DrawingView) keyboardView.findViewById(R.id.drawingView);
         return keyboardView;
     }
 
@@ -78,7 +78,7 @@ public class MotionKey extends InputMethodService implements SensorEventListener
     public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
 
-        if(info.inputType == InputType.TYPE_CLASS_TEXT) {
+        if (info.inputType == InputType.TYPE_CLASS_TEXT) {
             // check if input is text
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
             startingTime = (int) System.currentTimeMillis();
@@ -98,23 +98,21 @@ public class MotionKey extends InputMethodService implements SensorEventListener
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(mAccelerometer != null) {
+        if (mAccelerometer != null) {
 
             int endingTime = (int) System.currentTimeMillis();
-
             float[] values = event.values;
-
             Float valueX = values[0];
             Float valueY = values[1];
             Float valueZ = values[2];
 
             // the threshold for x-axis speed
-            if(valueX > xAxisSensitivity || valueX < -xAxisSensitivity) {
+            if (valueX > xAxisSensitivity || valueX < -xAxisSensitivity) {
 
                 view.ball.dx = valueX * 10;
                 valueXList.add(valueX);
 
-                if(valueXList.size() > 5) {
+                if (valueXList.size() > 5) {
 
                     InputConnection ic = getCurrentInputConnection();
                     ic.commitText(new String(new int[]{0x1F602}, 0, 1), 0);
@@ -123,21 +121,21 @@ public class MotionKey extends InputMethodService implements SensorEventListener
             }
 
             // the threshold for y-axis speed
-            if(valueY > yAxisSensitivity || valueY < -yAxisSensitivity) {
+            if (valueY > yAxisSensitivity || valueY < -yAxisSensitivity) {
 
                 view.ball.dy = valueY * 10;
                 valueYList.add(valueY);
 
-                if(valueYList.size() > 5) {
+                if (valueYList.size() > 5) {
                     InputConnection ic = getCurrentInputConnection();
                     ic.commitText(new String(new int[]{0x1F60A}, 0, 1), 0);
                     valueYList.clear();
                 }
             }
 
-            if(valueZ > zAxisSensitivity || valueZ < -zAxisSensitivity) {
+            if (valueZ > zAxisSensitivity || valueZ < -zAxisSensitivity) {
                 valueZList.add(valueZ);
-                if(valueZList.size() > 5) {
+                if (valueZList.size() > 5) {
                     InputConnection ic = getCurrentInputConnection();
                     ic.commitText(new String(new int[]{0x1F60C}, 0, 1), 0);
                     valueZList.clear();
@@ -146,7 +144,7 @@ public class MotionKey extends InputMethodService implements SensorEventListener
 
             // Clear the lists every 0.5 second
             int timeDiff = endingTime - startingTime;
-            if(timeDiff > 500) {
+            if (timeDiff > 500) {
 
                 startingTime = endingTime;
                 // clear the list

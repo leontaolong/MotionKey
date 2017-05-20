@@ -23,19 +23,19 @@ public class Ball {
         return this.radius;
     }
 
-    public void setRadius(float radius){
+    public void setRadius(float radius) {
         this.radius = radius;
     }
 
-    public void setX(float cx){
+    public void setX(float cx) {
         this.cx = cx;
     }
 
-    public float getX(){
+    public float getX() {
         return this.cx;
     }
 
-    public void setY(float cy){
+    public void setY(float cy) {
         this.cy = cy;
     }
 

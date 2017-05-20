@@ -16,9 +16,9 @@ public class SettingsActivity extends AppCompatActivity {
         android.app.FragmentManager fm = getFragmentManager();
         android.app.FragmentTransaction ft = fm.beginTransaction();
 
-        SettingsFragment settingsFragment = new SettingsFragment();
+        SettingsFragment fragment = new SettingsFragment();
 
-        ft.replace(android.R.id.content, settingsFragment, "SettingsFragment");
+        ft.replace(android.R.id.content, fragment, "SettingsFragment");
         ft.commit();
     }
 }

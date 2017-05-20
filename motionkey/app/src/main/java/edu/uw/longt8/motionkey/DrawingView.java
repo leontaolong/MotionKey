@@ -45,7 +45,8 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
     public DrawingView(Context context, AttributeSet attrs, int defaultStyle) {
         super(context, attrs, defaultStyle);
 
-        viewWidth = 1; viewHeight = 1; //positive defaults; will be replaced when #surfaceChanged() is called
+        viewWidth = 1;
+        viewHeight = 1; //positive defaults; will be replaced when #surfaceChanged() is called
 
         // register our interest in hearing about changes to our surface
         mHolder = getHolder();
@@ -62,13 +63,13 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * Initialize graphical drawing state
      */
-    public void init(){
+    public void init() {
         //make ball
-        ball = new Ball(viewWidth/2, viewHeight/2, 100);
+        ball = new Ball(viewWidth / 2, viewHeight / 2, 100);
     }
 
 
-    public void update(){
+    public void update() {
 
         ball.cx += ball.dx; //move
         ball.cy += ball.dy;
@@ -78,19 +79,16 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
 
 
         // makes sure the ball stays in the canvas
-        if(ball.cx + ball.radius > viewWidth) {
+        if (ball.cx + ball.radius > viewWidth) {
             ball.cx = viewWidth - ball.radius;
             ball.dx *= -1;
-        }
-        else if(ball.cx - ball.radius < 0) {
+        } else if (ball.cx - ball.radius < 0) {
             ball.cx = ball.radius;
             ball.dx *= -1;
-        }
-        else if(ball.cy + ball.radius > viewHeight) {
+        } else if (ball.cy + ball.radius > viewHeight) {
             ball.cy = viewHeight - ball.radius;
             ball.dy *= -1;
-        }
-        else if(ball.cy - ball.radius < 0) {
+        } else if (ball.cy - ball.radius < 0) {
             ball.cy = ball.radius;
             ball.dy *= -1;
         }
@@ -99,10 +97,11 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Helper method for the "render loop"
+     *
      * @param canvas The canvas to draw on
      */
-    public synchronized void render(Canvas canvas){
-        if(canvas == null) return;
+    public synchronized void render(Canvas canvas) {
+        if (canvas == null) return;
 
         canvas.drawColor(Color.rgb(51, 0, 111));
         canvas.drawCircle(ball.cx, ball.cy, ball.radius, ballPaint);
@@ -131,7 +130,7 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder holder) {
         mRunnable.setRunning(false); //turn off
         boolean retry = true;
-        while(retry) {
+        while (retry) {
             try {
                 mThread.join();
                 retry = false;
@@ -150,13 +149,13 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
 
         private boolean isRunning; //whether we're running or not (so we can "stop" the thread)
 
-        public void setRunning(boolean running){
+        public void setRunning(boolean running) {
             this.isRunning = running;
         }
+
         public void run() {
             Canvas canvas;
-            while(isRunning)
-            {
+            while (isRunning) {
                 canvas = null;
                 try {
                     canvas = mHolder.lockCanvas();
@@ -164,8 +163,7 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
                         update(); //update the game
                         render(canvas); //redraw the screen
                     }
-                }
-                finally { //no matter what (even if something goes wrong), make sure to push the drawing so isn't inconsistent
+                } finally { //no matter what (even if something goes wrong), make sure to push the drawing so isn't inconsistent
                     if (canvas != null) {
                         mHolder.unlockCanvasAndPost(canvas);
                     }

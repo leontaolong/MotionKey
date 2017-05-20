@@ -26,10 +26,9 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
     private DrawingRunnable mRunnable; //the code that we'll want to run on a background thread
     private Thread mThread; //the background thread
 
-    private Paint whitePaint; //drawing variables (pre-defined for speed)
-    private Paint goldPaint; //drawing variables (pre-defined for speed)
+    private Paint ballPaint;
 
-    public Ball ball; //public for easy access
+    public Ball ball;
 
 
     /**
@@ -55,11 +54,8 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
         mRunnable = new DrawingRunnable();
 
         //set up drawing variables ahead of time
-        whitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        whitePaint.setColor(Color.WHITE);
-        goldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        goldPaint.setColor(Color.rgb(145, 123, 76));
-
+        ballPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        ballPaint.setColor(Color.rgb(232, 211, 162));
         init();
     }
 
@@ -72,36 +68,29 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    /**
-     * Helper method for the "game loop"
-     */
     public void update(){
-        //update the "game state" here (move things around, etc.
 
         ball.cx += ball.dx; //move
         ball.cy += ball.dy;
-
         //slow down
         ball.dx *= 0.99;
         ball.dy *= 0.99;
 
-//        if(ball.dx < .1) ball.dx = 0;
-//        if(ball.dy < .1) ball.dy = 0;
 
-        /* hit detection */
-        if(ball.cx + ball.radius > viewWidth) { //left bound
+        // makes sure the ball stays in the canvas
+        if(ball.cx + ball.radius > viewWidth) {
             ball.cx = viewWidth - ball.radius;
             ball.dx *= -1;
         }
-        else if(ball.cx - ball.radius < 0) { //right bound
+        else if(ball.cx - ball.radius < 0) {
             ball.cx = ball.radius;
             ball.dx *= -1;
         }
-        else if(ball.cy + ball.radius > viewHeight) { //bottom bound
+        else if(ball.cy + ball.radius > viewHeight) {
             ball.cy = viewHeight - ball.radius;
             ball.dy *= -1;
         }
-        else if(ball.cy - ball.radius < 0) { //top bound
+        else if(ball.cy - ball.radius < 0) {
             ball.cy = ball.radius;
             ball.dy *= -1;
         }
@@ -113,18 +102,15 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
      * @param canvas The canvas to draw on
      */
     public synchronized void render(Canvas canvas){
-        if(canvas == null) return; //if we didn't get a valid canvas for whatever reason
+        if(canvas == null) return;
 
-        canvas.drawColor(Color.rgb(255, 64, 64)); //purple out the background
-
-        canvas.drawCircle(ball.cx, ball.cy, ball.radius, whitePaint); //we can draw directly onto the canvas
+        canvas.drawColor(Color.rgb(51, 0, 111));
+        canvas.drawCircle(ball.cx, ball.cy, ball.radius, ballPaint);
     }
 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        //create and start the background updating thread
-        Log.d(TAG, "Creating new drawing thread");
         mThread = new Thread(mRunnable);
         mRunnable.setRunning(true); //turn on the runner
         mThread.start(); //start up the thread when surface is created
@@ -137,15 +123,12 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
             viewWidth = width;
             viewHeight = height;
             bmp = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888); //new buffer to draw on
-
             init();
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // we have to tell thread to shut down & wait for it to finish, or else
-        // it might touch the Surface after we return and explode
         mRunnable.setRunning(false); //turn off
         boolean retry = true;
         while(retry) {
@@ -170,14 +153,13 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
         public void setRunning(boolean running){
             this.isRunning = running;
         }
-
         public void run() {
             Canvas canvas;
             while(isRunning)
             {
                 canvas = null;
                 try {
-                    canvas = mHolder.lockCanvas(); //grab the current canvas
+                    canvas = mHolder.lockCanvas();
                     synchronized (mHolder) {
                         update(); //update the game
                         render(canvas); //redraw the screen

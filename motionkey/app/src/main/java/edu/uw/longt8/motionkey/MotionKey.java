@@ -26,9 +26,9 @@ import static java.lang.Integer.valueOf;
 
 public class MotionKey extends InputMethodService implements SensorEventListener {
 
-    private static final String TAG = "MotionKeyboard";
+    private static final String TAG = "MotionKey";
 
-    private FrameLayout motionKeyboardView;
+    private FrameLayout keyboardView;
     private DrawingView view;
 
     private InputMethodManager mInputMethodManager;
@@ -42,10 +42,9 @@ public class MotionKey extends InputMethodService implements SensorEventListener
 
     private int startingTime;
 
-    private int xAxisShakeSensitivity;
-    private int yAxisShakeSensitivity;
-    private int zAxisShakeSensitivity;
-    private int ballMovingSpeed;
+    private int xAxisSensitivity;
+    private int yAxisSensitivity;
+    private int zAxisSensitivity;
 
     @Override
     public void onCreate() {
@@ -53,7 +52,7 @@ public class MotionKey extends InputMethodService implements SensorEventListener
 
         mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
-        // Create linear acceleration sensor (XYZ, gravity excluded)
+        // Create linear acceleration sensor
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
@@ -61,20 +60,17 @@ public class MotionKey extends InputMethodService implements SensorEventListener
         valueYList = new ArrayList<Float>();
         valueZList = new ArrayList<Float>();
 
-        // User preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        xAxisShakeSensitivity = valueOf(prefs.getString("xAxisShakeSensitivity", "10"));
-        yAxisShakeSensitivity = valueOf(prefs.getString("yAxisShakeSensitivity", "10"));
-        zAxisShakeSensitivity = valueOf(prefs.getString("zAxisShakeSensitivity", "10"));
-        ballMovingSpeed = valueOf(prefs.getString("ballMovingSpeed", "10"));
+        xAxisSensitivity = valueOf(prefs.getString("xAxisSensitivity", "5"));
+        yAxisSensitivity = valueOf(prefs.getString("yAxisSensitivity", "5"));
+        zAxisSensitivity = valueOf(prefs.getString("zAxisSensitivity", "5s"));
     }
 
     @Override
     public View onCreateInputView() {
-        motionKeyboardView = (FrameLayout) getLayoutInflater().inflate(R.layout.input, null);
-        view = (DrawingView)motionKeyboardView.findViewById(R.id.drawingView);
-        return motionKeyboardView;
+        keyboardView = (FrameLayout) getLayoutInflater().inflate(R.layout.input, null);
+        view = (DrawingView)keyboardView.findViewById(R.id.drawingView);
+        return keyboardView;
     }
 
 
@@ -89,7 +85,7 @@ public class MotionKey extends InputMethodService implements SensorEventListener
 
         } else {
             // Otherwise prompt the user to change to a different keyboard
-            Toast.makeText(this, "Sorry! MotionKey doesn't support this input type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sorry, this input type is not supported.", Toast.LENGTH_SHORT).show();
             mInputMethodManager.showInputMethodPicker();
         }
     }
@@ -112,44 +108,38 @@ public class MotionKey extends InputMethodService implements SensorEventListener
             Float valueY = values[1];
             Float valueZ = values[2];
 
-            // Define the threshold for x-axis speed
-            if(valueX > xAxisShakeSensitivity || valueX < -xAxisShakeSensitivity) {
+            // the threshold for x-axis speed
+            if(valueX > xAxisSensitivity || valueX < -xAxisSensitivity) {
 
-                view.ball.dx = valueX * ballMovingSpeed;
+                view.ball.dx = valueX * 10;
                 valueXList.add(valueX);
 
                 if(valueXList.size() > 5) {
 
                     InputConnection ic = getCurrentInputConnection();
-                    ic.commitText(new String(Character.toChars(0x1F602)), 0);
+                    ic.commitText(new String(new int[]{0x1F602}, 0, 1), 0);
                     valueXList.clear();
                 }
             }
 
-            // Define the threshold for y-axis speed
-            if(valueY > yAxisShakeSensitivity || valueY < -yAxisShakeSensitivity) {
+            // the threshold for y-axis speed
+            if(valueY > yAxisSensitivity || valueY < -yAxisSensitivity) {
 
-                // Move the ball on y-axis
-                view.ball.dy = valueY * ballMovingSpeed;
-
+                view.ball.dy = valueY * 10;
                 valueYList.add(valueY);
 
                 if(valueYList.size() > 5) {
                     InputConnection ic = getCurrentInputConnection();
-                    ic.commitText(new String(Character.toChars(0x1F60A)), 0);
+                    ic.commitText(new String(new int[]{0x1F60A}, 0, 1), 0);
                     valueYList.clear();
                 }
             }
 
-            // Define the threshold for z-axis speed
-            if(valueZ > zAxisShakeSensitivity || valueZ < -zAxisShakeSensitivity) {
-
+            if(valueZ > zAxisSensitivity || valueZ < -zAxisSensitivity) {
                 valueZList.add(valueZ);
-
                 if(valueZList.size() > 5) {
                     InputConnection ic = getCurrentInputConnection();
-                    ic.commitText(new String(Character.toChars(0x1F60C)), 0);
-
+                    ic.commitText(new String(new int[]{0x1F60C}, 0, 1), 0);
                     valueZList.clear();
                 }
             }

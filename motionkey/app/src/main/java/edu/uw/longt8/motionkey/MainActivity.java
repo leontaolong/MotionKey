@@ -8,6 +8,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+/**
+ * Created by Leon on 5/18/2017.
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -15,15 +18,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView xAxisInstruction = (TextView) findViewById(R.id.xAxis);
-        TextView yAxisInstruction = (TextView) findViewById(R.id.yAxis);
-        TextView zAxisInstruction = (TextView) findViewById(R.id.zAxis);
-//        TextView txtBallMovingSpeed = (TextView) findViewById(R.id.ballMovingSpeed);
+        TextView xAxis = (TextView) findViewById(R.id.xAxis);
+        TextView yAxis = (TextView) findViewById(R.id.yAxis);
+        TextView zAxis = (TextView) findViewById(R.id.zAxis);
 
-        xAxisInstruction.setText("Shake device along the x-axis to make " + new String(Character.toChars(0x1F602)));
-        yAxisInstruction.setText("Shake device along the y-axis to make " + new String(Character.toChars(0x1F60A)));
-        zAxisInstruction.setText("Shake device along the z-axis to make " + new String(Character.toChars(0x1F60C)));
-//        txtBallMovingSpeed.setText("The current ball moving speed is " + ballMovingSpeed);
+        xAxis.setText("Move device along the X axis: " + new String(new int[]{0x1F602}, 0, 1));
+        yAxis.setText("Move device along the Y axis: " + new String(new int[]{0x1F60A}, 0, 1));
+        zAxis.setText("Move device along the Z axis: " + new String(new int[]{0x1F60C}, 0, 1));
     }
 
 
@@ -39,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_settings:
-                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(settingsIntent);
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

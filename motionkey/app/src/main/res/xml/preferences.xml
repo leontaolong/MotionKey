@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="xAxisSensitivity"
+        android:title="X Axis Motion Sensitivity"
+        android:defaultValue="5"
+        />
+
+    <EditTextPreference
+        android:key="yAxisSensitivity"
+        android:title="Y Axis Motion Sensitivity"
+        android:defaultValue="5"
+        />
+
+    <EditTextPreference
+        android:key="zAxisSensitivity"
+        android:title="Z Axis Motion Sensitivity"
+        android:defaultValue="5"
+        />
+
+</PreferenceScreen>

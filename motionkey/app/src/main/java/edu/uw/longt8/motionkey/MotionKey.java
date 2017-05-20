@@ -11,11 +11,14 @@ import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static java.lang.Integer.valueOf;
 
 /**
  * Created by Leon on 5/18/17.
@@ -61,20 +64,16 @@ public class MotionKey extends InputMethodService implements SensorEventListener
         // User preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        xAxisShakeSensitivity = 10;
-        yAxisShakeSensitivity = 10;
-        zAxisShakeSensitivity = 10;
-        ballMovingSpeed = 10;
+        xAxisShakeSensitivity = valueOf(prefs.getString("xAxisShakeSensitivity", "10"));
+        yAxisShakeSensitivity = valueOf(prefs.getString("yAxisShakeSensitivity", "10"));
+        zAxisShakeSensitivity = valueOf(prefs.getString("zAxisShakeSensitivity", "10"));
+        ballMovingSpeed = valueOf(prefs.getString("ballMovingSpeed", "10"));
     }
 
     @Override
     public View onCreateInputView() {
-
-        // Inflate "MotionKeyboard" view
         motionKeyboardView = (FrameLayout) getLayoutInflater().inflate(R.layout.input, null);
-
         view = (DrawingView)motionKeyboardView.findViewById(R.id.drawingView);
-
         return motionKeyboardView;
     }
 
@@ -84,8 +83,7 @@ public class MotionKey extends InputMethodService implements SensorEventListener
         super.onStartInputView(info, restarting);
 
         if(info.inputType == InputType.TYPE_CLASS_TEXT) {
-            // If the input type is text, register the sensor
-            // Use the fast (game speed) delay
+            // check if input is text
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
             startingTime = (int) System.currentTimeMillis();
 
@@ -99,15 +97,74 @@ public class MotionKey extends InputMethodService implements SensorEventListener
     @Override
     public void onFinishInputView(boolean finishingInput) {
         super.onFinishInputView(finishingInput);
-
-        // Unregister the sensor when the input is finished
         mSensorManager.unregisterListener(this, mAccelerometer);
     }
 
-
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if(mAccelerometer != null) {
 
+            int endingTime = (int) System.currentTimeMillis();
+
+            float[] values = event.values;
+
+            Float valueX = values[0];
+            Float valueY = values[1];
+            Float valueZ = values[2];
+
+            // Define the threshold for x-axis speed
+            if(valueX > xAxisShakeSensitivity || valueX < -xAxisShakeSensitivity) {
+
+                view.ball.dx = valueX * ballMovingSpeed;
+                valueXList.add(valueX);
+
+                if(valueXList.size() > 5) {
+
+                    InputConnection ic = getCurrentInputConnection();
+                    ic.commitText(new String(Character.toChars(0x1F602)), 0);
+                    valueXList.clear();
+                }
+            }
+
+            // Define the threshold for y-axis speed
+            if(valueY > yAxisShakeSensitivity || valueY < -yAxisShakeSensitivity) {
+
+                // Move the ball on y-axis
+                view.ball.dy = valueY * ballMovingSpeed;
+
+                valueYList.add(valueY);
+
+                if(valueYList.size() > 5) {
+                    InputConnection ic = getCurrentInputConnection();
+                    ic.commitText(new String(Character.toChars(0x1F60A)), 0);
+                    valueYList.clear();
+                }
+            }
+
+            // Define the threshold for z-axis speed
+            if(valueZ > zAxisShakeSensitivity || valueZ < -zAxisShakeSensitivity) {
+
+                valueZList.add(valueZ);
+
+                if(valueZList.size() > 5) {
+                    InputConnection ic = getCurrentInputConnection();
+                    ic.commitText(new String(Character.toChars(0x1F60C)), 0);
+
+                    valueZList.clear();
+                }
+            }
+
+            // Clear the lists every 0.5 second
+            int timeDiff = endingTime - startingTime;
+            if(timeDiff > 500) {
+
+                startingTime = endingTime;
+                // clear the list
+                valueXList.clear();
+                valueYList.clear();
+                valueZList.clear();
+            }
+        }
     }
 
     @Override

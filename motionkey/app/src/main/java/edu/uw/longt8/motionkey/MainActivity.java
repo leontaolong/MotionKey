@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
         TextView zAxisInstruction = (TextView) findViewById(R.id.zAxis);
 //        TextView txtBallMovingSpeed = (TextView) findViewById(R.id.ballMovingSpeed);
 
-        xAxisInstruction.setText("Shake device along the x-axis to make " + new String(Character.toChars(0x1F618)));
-        yAxisInstruction.setText("Shake device along the y-axis to make " + new String(Character.toChars(0x1F618)));
-        zAxisInstruction.setText("Shake device along the z-axis to make " + new String(Character.toChars(0x1F618)));
+        xAxisInstruction.setText("Shake device along the x-axis to make " + new String(Character.toChars(0x1F602)));
+        yAxisInstruction.setText("Shake device along the y-axis to make " + new String(Character.toChars(0x1F60A)));
+        zAxisInstruction.setText("Shake device along the z-axis to make " + new String(Character.toChars(0x1F60C)));
 //        txtBallMovingSpeed.setText("The current ball moving speed is " + ballMovingSpeed);
     }
 
@@ -30,25 +30,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch(item.getItemId()) {
-
             case R.id.menu_settings:
-
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
-
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
